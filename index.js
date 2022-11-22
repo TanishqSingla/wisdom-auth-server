@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const userRouter = require('./routes/userRoutes.js');
 
@@ -7,6 +8,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/users").then(() => console.log('db c
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.use('/api/user', userRouter);
 
