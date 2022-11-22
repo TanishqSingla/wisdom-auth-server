@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 module.exports.signup = async (req, res) => {
 	const { name, email, password, phoneNumber } = req.body;
@@ -11,16 +12,47 @@ module.exports.signup = async (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-	const { email, password } = req.body;
-	const user = await User.findOne({ email });
+	const { password } = req.body;
+	let user, responseString;
+
+	if (req.body?.email) {
+		user = await User.findOne({ email: req.body.email });
+		responseString = "email";
+	} else {
+		user = await User.findOne({ phoneNumber: req.body.phoneNumber });
+		responseString = "mobile number";
+	}
+
 	if (user) {
 		const auth = await bcrypt.compare(password, user.password);
 		if (auth) {
 			res.status(200).json(req.body);
 		} else {
-			res.status(403).json({ error: "Password doesn't match" });
+			res.status(403).json({ error: "Sorry! Password entered is incorrect." });
 		}
 	} else {
-		res.status(404).json({ error: "Email doesn't exist" });
+		res
+			.status(404)
+			.json({ error: `Sorry! This ${responseString} is not registered.` });
+	}
+};
+
+module.exports.recoverPassword = async (req, res) => {
+	let user, responseString;
+
+	if (req.body?.email) {
+		user = await User.findOne({ email: req.body.email });
+		responseString = "email";
+	} else {
+		user = await User.findOne({ phoneNumber });
+		responseString = "mobile number";
+	}
+
+	if (user) {
+		res.status(200).json({ message: "Recovery link send" });
+	} else {
+		res
+			.status(404)
+			.json({ error: `Sorry! This ${responseString} is not registered` });
 	}
 };
