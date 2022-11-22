@@ -44,7 +44,7 @@ module.exports.recoverPassword = async (req, res) => {
 		user = await User.findOne({ email: req.body.email });
 		responseString = "email";
 	} else {
-		user = await User.findOne({ phoneNumber });
+		user = await User.findOne({ phoneNumber: req.body.phoneNumber });
 		responseString = "mobile number";
 	}
 
