@@ -28,12 +28,12 @@ module.exports.login = async (req, res) => {
 		if (auth) {
 			res.status(200).json(req.body);
 		} else {
-			res.status(403).json({ error: "Sorry! Password entered is incorrect." });
+			res.status(403).json({ error: {password:"Sorry! Password entered is incorrect."} });
 		}
 	} else {
 		res
 			.status(404)
-			.json({ error: `Sorry! This ${responseString} is not registered.` });
+			.json({ error: {email:`Sorry! This ${responseString} is not registered.`} });
 	}
 };
 
